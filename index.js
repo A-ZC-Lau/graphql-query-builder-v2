@@ -139,8 +139,24 @@ Query.prototype = {
         if (undefined === this.bodyS) {
             throw new ReferenceError("return properties are not defined. use the 'find' function to defined them");
         }
+
+        let alias = 
+            (this.aliasS) 
+                ? (this.aliasS + ":") 
+                : ""
+        let fnNameS = 
+            this.fnNameS
+        let part2 = 
+            (0 < this.headA.length)
+                ? `( ${this.headA.join(",")} )`
+                : "" 
+        let part3 = 
+            this.bodyS 
+                ? `{ ${ this.bodyS } }` 
+                : ""
         
-        return `${ (this.aliasS) ? (this.aliasS + ":") : "" } ${this.fnNameS } ${ (0 < this.headA.length)?"("+this.headA.join(",")+")":"" }  { ${ this.bodyS } }`;
+        return `${alias} ${fnNameS} ${part2} ${part3}`;
+        // return `${ (this.aliasS) ? (this.aliasS + ":") : "" } ${this.fnNameS } ${ (0 < this.headA.length)?"("+this.headA.join(",")+")":"" }  { ${ this.bodyS } }`;
     }
 };
 
