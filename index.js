@@ -42,7 +42,7 @@ function parceFind(_levelA) {
 //=====================================================
 
 function getGraphQLValue(value) {
-      if ("string" === typeof value) {
+      if ("string" === typeof value || value === null || value === undefined) {
         value = JSON.stringify(value);
       } else if (Array.isArray(value)) {
         value = value.map(item => {
@@ -87,14 +87,15 @@ function Query(_fnNameS, _aliasS_OR_Filter){
     
     this.fnNameS = _fnNameS;
     this.headA = [];
+
     
     this.filter = (filtersO) => {
- 
         for(let propS in filtersO){
             if ("function" === typeof filtersO[propS]) {
               continue;
             }
             let val = getGraphQLValue(filtersO[propS]);
+
             if ("{}" === val) {
               continue;
             }
@@ -136,9 +137,9 @@ function Query(_fnNameS, _aliasS_OR_Filter){
 Query.prototype = {
     
     toString : function(){
-        if (undefined === this.bodyS) {
-            throw new ReferenceError("return properties are not defined. use the 'find' function to defined them");
-        }
+        // if (undefined === this.bodyS) {
+        //     throw new ReferenceError("return properties are not defined. use the 'find' function to defined them");
+        // }
 
         let alias = 
             (this.aliasS) 
@@ -150,6 +151,8 @@ Query.prototype = {
             (0 < this.headA.length)
                 ? `( ${this.headA.join(",")} )`
                 : "" 
+        // console.log(this.headA)
+        // console.log(this.bodyS)
         let part3 = 
             this.bodyS 
                 ? `{ ${ this.bodyS } }` 
