@@ -8,6 +8,20 @@ function removeSpaces(textS) {
 
 describe("graphql query builder", function() { //log the function
 	
+	it('should accept no find value', function(){
+		let expeted = `user`;
+		let user = new Query("user");
+		
+		expect(removeSpaces(expeted)).to.equal(removeSpaces(user));
+    });
+
+	it('should accept a null argument value', function(){
+		let expeted = `user (id: null)`;
+        let user = new Query("user", { id: null });
+
+		expect(removeSpaces(expeted)).to.equal(removeSpaces(user));
+    });
+    
 	it('should accept a single find value', function(){
 		let expeted = `user{age}`;
 		let user = new Query("user").find("age");
@@ -182,8 +196,8 @@ describe("graphql query builder", function() { //log the function
 		expect(() => new Query("x").find()).to.throw(Error);
 	});
 	
-	it('should throw Error if no find values have been set', function(){
-		expect(() => `${new Query("x")}`).to.throw(Error);
+	it('should not throw Error if no find values have been set', function(){
+		expect(() => `${new Query("x")}`).not.to.throw(Error);
 	});
 	
 	it('should throw Error if find is not valid', function(){
