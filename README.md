@@ -1,8 +1,48 @@
 # graphql-query-builder-v2
 
-Since graphql-query-builder seems to no longer be actively maintained, I have forked it. Nothing much has changed except the ability to use `null` and `undefined` values in the arguments.
+Since graphql-query-builder seems to no longer be actively maintained, I have forked it. Nothing much has changed except the ability to use `null` and `undefined` values in the arguments. You are also allowed to not execute `.find`
 
 API is unchanged.
+
+### Working examples in v2
+```javascript
+let query =
+    new QueryBuilder(
+        "functionName",
+        {
+            name: null
+        }
+    )
+```
+
+**Output**
+
+`functionName( name: null )`
+
+#### With .find
+
+```javascript
+let query =
+    new QueryBuilder(
+        "functionName",
+        {
+            name: null
+        }
+    )
+query.find([
+    "_id",
+    "name"
+])
+```
+
+**Output**
+
+```javascript
+functionName( name: null ) {
+    _id,
+    name
+}
+```
 
 # Install
 
