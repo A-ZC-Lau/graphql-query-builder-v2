@@ -2,6 +2,18 @@
 
 Since graphql-query-builder seems to no longer be actively maintained, I have forked it. Nothing much has changed except the ability to use `null` and `undefined` values in the arguments.
 
+API is unchanged.
+
+# Install
+
+Use this instead of the install below. 
+
+`npm install graphql-query-builder-v2`
+
+<hr>
+<hr>
+
+
 # graphql-query-builder
 
 a simple but powerful graphQL query builder
