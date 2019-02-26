@@ -44,6 +44,24 @@ functionName( name: null ) {
 }
 ```
 
+#### With enums
+
+```javascript
+let query =
+    new QueryBuilder(
+        "functionName",
+        {
+            status: QueryBuilder.Enum('draft')
+        }
+    )
+```
+
+**Output**
+
+```javascript
+functionName( status: draft )
+```
+
 # Install
 
 Use this instead of the install below. 
