@@ -6,8 +6,10 @@ API is unchanged.
 
 ### Working examples in v2
 ```javascript
+import { Query } from 'graphql-query-builder-v2';
+
 let query =
-    new QueryBuilder(
+    new Query(
         "functionName",
         {
             name: null
@@ -22,8 +24,10 @@ let query =
 #### With .find
 
 ```javascript
+import { Query } from 'graphql-query-builder-v2';
+
 let query =
-    new QueryBuilder(
+    new Query(
         "functionName",
         {
             name: null
@@ -47,11 +51,13 @@ functionName( name: null ) {
 #### With enums
 
 ```javascript
+import { Query, Enum } from 'graphql-query-builder-v2';
+
 let query =
-    new QueryBuilder(
+    new Query(
         "functionName",
         {
-            status: QueryBuilder.Enum('draft')
+            status: Enum('draft')
         }
     )
 ```
@@ -60,6 +66,36 @@ let query =
 
 ```javascript
 functionName( status: draft )
+```
+
+#### Mutations 
+
+```javascript
+import { Mutation } from 'graphql-query-builder-v2';
+
+let mutation = new Mutation(
+    "addProduct",
+    { categoryId: "ID!", productData: "ProductInput!" },
+    ["id", "title", {category: ["id", "title"]}, "active"]
+);
+
+mutation.setAlias('product');
+```
+
+**Output**
+
+```javascript
+addProduct($categoryId: ID!, $productData: ProductInput!) {
+  product: addProduct(categoryId: $categoryId, productData: $productData) {
+    id,
+    title,
+    category {
+      id,
+      title
+    },
+    active
+  }
+}
 ```
 
 # Install

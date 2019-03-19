@@ -1,5 +1,4 @@
-var Query = require('../');
-
+var { Query } = require("../");
 
 /*
 {
@@ -17,12 +16,13 @@ var Query = require('../');
 }
 */
 
-let profilePicture = new Query("profilePicture",{size : 50});
-    profilePicture.find( "uri", "width", "height");
-let user = new Query("user",{id : 3500401});
-    user.find(["id", {"nickname":"name"}, "isViewerFriend",  {"image":profilePicture}]);
+let profilePicture = new Query("profilePicture", { size: 50 });
+profilePicture.find("uri", "width", "height");
 
-  logger.log("user",user+"");
+let user = new Query("user", { id: 3500401 });
+user.find(["id", { "nickname": "name" }, "isViewerFriend", { "image": profilePicture }]);
+
+console.log("user", user + "");
 /*
 
 query FetchLeeAndSam {
@@ -37,14 +37,14 @@ query FetchLeeAndSam {
 
 let FetchLeeAndSam = new Query("FetchLeeAndSam");
 
-let lee = new Query("user",{id : '1'});
-  lee.setAlias('lee');
-  lee.find({name:true});
-  logger.log("lee",lee.toString());
-  
-let sam = new Query("user","sam");
-  sam.filter({id : '2'});
-  sam.find("name");
-  logger.log("sam",sam+"");
-  
- console.log(FetchLeeAndSam.find(lee,sam)+"");
+let lee = new Query("user", { id: "1" });
+lee.setAlias("lee");
+lee.find({ name: true });
+console.log("lee", lee.toString());
+
+let sam = new Query("user", "sam");
+sam.filter({ id: "2" });
+sam.find("name");
+console.log("sam", sam + "");
+
+console.log(FetchLeeAndSam.find(lee, sam) + "");

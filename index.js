@@ -4,8 +4,7 @@
 //============================ parce properties to find
 //=====================================================
 
-function parceFind(_levelA) {
-
+function parseFind(_levelA) {
 //+++++++++++++++++++++++++++++++++++ work over Array
 //++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -60,7 +59,7 @@ function getGraphQLValue(value) {
 }
 
 function objectToString(obj) {
-    if (obj instanceof Query.EnumValue) {
+    if (obj instanceof EnumValue) {
         return obj.value;
     }
 
@@ -125,7 +124,7 @@ function Query(_fnNameS, _aliasS_OR_Filter) {
         }
         // if its a string.. it may have other values
         // else it sould be an Object or Array of maped values
-        this.bodyS = parceFind((Array.isArray(findA)) ? findA : Array.from(arguments));
+        this.bodyS = parseFind((Array.isArray(findA)) ? findA : Array.from(arguments));
         return this;
     };
 }
@@ -137,37 +136,59 @@ function Query(_fnNameS, _aliasS_OR_Filter) {
 Query.prototype = {
 
     toString: function() {
-        // if (undefined === this.bodyS) {
-        //     throw new ReferenceError("return properties are not defined. use the 'find' function to defined them");
-        // }
+        let alias = this.aliasS ? (this.aliasS + ":") : "";
+        let fnNameS = this.fnNameS;
+        let part2 = (0 < this.headA.length) ? `( ${this.headA.join(",")} )` : "";
 
-        let alias =
-            (this.aliasS)
-                ? (this.aliasS + ":")
-                : ""
-        let fnNameS =
-            this.fnNameS
-        let part2 =
-            (0 < this.headA.length)
-                ? `( ${this.headA.join(",")} )`
-                : ""
-        // console.log(this.headA)
-        // console.log(this.bodyS)
-        let part3 =
-            this.bodyS
-                ? `{ ${this.bodyS} }`
-                : ""
+        let part3 = this.bodyS ? `{ ${this.bodyS} }` : "";
 
         return `${alias} ${fnNameS} ${part2} ${part3}`;
-        // return `${ (this.aliasS) ? (this.aliasS + ":") : "" } ${this.fnNameS } ${ (0 < this.headA.length)?"("+this.headA.join(",")+")":"" }  { ${ this.bodyS } }`;
     }
 };
 
 //=====================================================
-//========================================= Enum Class
+//====================================== Mutation Class
 //=====================================================
 
-Query.EnumValue = function EnumValue(value) {
+function Mutation(name, args, selection) {
+    this.name = name;
+    this.args = args;
+
+    this.find = (fields) => {
+        this.selection = fields;
+    };
+
+    this.setAlias = (alias) => {
+        this.alias = alias;
+        return this;
+    };
+
+    this.find(selection);
+}
+
+Mutation.prototype = {
+    toString: function() {
+        let declaration = Object.keys(this.args).reduce((memo, property) => {
+            return `${memo}${memo.length > 0 ? ", " : ""}$${property}: ${this.args[property]}`;
+        }, "");
+
+        let variables = Object.keys(this.args).reduce((memo, property) => {
+            return `${memo}${memo.length > 0 ? ", " : ""}${property}: $${property}`;
+        }, "");
+
+        let alias = this.alias ? `${this.alias}:` : "";
+
+        return `${this.name} (${declaration}) {
+        ${alias} ${this.name} (${variables}) {${parseFind(this.selection, false)}}
+      }`;
+    }
+};
+
+//=====================================================
+//========================================== Enum Class
+//=====================================================
+
+function EnumValue(value) {
     if (!value) {
         throw new TypeError("enum value can not be >>falsy<<")
     }
@@ -175,8 +196,12 @@ Query.EnumValue = function EnumValue(value) {
     this.value = value;
 };
 
-Query.Enum = function Enum(value) {
-    return new Query.EnumValue(value);
+function Enum(value) {
+    return new EnumValue(value);
 };
 
-module.exports = Query;
+module.exports = {
+    Query,
+    Mutation,
+    Enum,
+};

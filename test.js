@@ -1,6 +1,8 @@
 "use strict";
 var expect = require("chai").expect;
-var Query = require("./index");
+var Query = require("./index").Query;
+var Mutation = require("./index").Mutation;
+var Enum = require("./index").Enum;
 
 function removeSpaces(textS) {
     return `${textS}`.replace(/\s+/g, "");
@@ -198,12 +200,56 @@ describe("graphql query builder", function() { //log the function
     it("should work with enums", function() {
         let expected = "inventory(type:missing) { id }";
 
-        let ChildsToy = { type: Query.Enum("missing"), utils: {} };
+        let ChildsToy = { type: Enum("missing"), utils: {} };
 
         let ItemQuery = new Query("inventory", ChildsToy);
         ItemQuery.find("id");
 
         expect(removeSpaces(expected)).to.equal(removeSpaces(ItemQuery));
+    });
+
+    it("should create mutation", function() {
+        let expected = `addProduct($categoryId: ID!, $productData: ProductInput!) {
+          addProduct(categoryId: $categoryId, productData: $productData) {
+            id,
+            title,
+            category {
+              id,
+              title
+            },
+            active
+          }
+        }
+        `;
+
+        let mutation = new Mutation(
+            "addProduct",
+            { categoryId: "ID!", productData: "ProductInput!" },
+            ["id", "title", {category: ["id", "title"]}, "active"]
+        );
+
+        expect(removeSpaces(expected)).to.equal(removeSpaces(mutation));
+    });
+
+    it("should create support mutation alias", function() {
+        let expected = `addProduct($categoryId: ID!, $productData: ProductInput!) {
+          product: addProduct(categoryId: $categoryId, productData: $productData) {
+            id,
+            title
+          }
+        }
+        `;
+
+        let mutation = new Mutation(
+            "addProduct",
+            { categoryId: "ID!", productData: "ProductInput!" },
+            ["id", "title", {category: ["id", "title"]}, "active"]
+        );
+
+        mutation.setAlias('product');
+        mutation.find(['id', 'title']);
+
+        expect(removeSpaces(expected)).to.equal(removeSpaces(mutation));
     });
 
     it("should throw Error it is not an input object for alias", function() {
