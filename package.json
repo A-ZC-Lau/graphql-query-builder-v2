@@ -1,6 +1,6 @@
 {
   "name": "graphql-query-builder-v2",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "a simple but powerful graphQL query builder",
   "main": "index.js",
   "bin": {},
