@@ -62,6 +62,69 @@ let query =
 functionName( status: draft )
 ```
 
+#### Combining to create graphql-upload example
+
+As I have recently started using graphql-upload, I am sharing how this package can also be used to create a valid FormData query.
+
+```javascript
+const QueryBuilder = require("graphql-query-builder-v2");
+
+// The wrapping "mutation"
+let mutation = new QueryBuilder("mutation");
+mutation.filter({
+	$image: QueryBuilder.Enum("Upload")
+});
+
+// Nested data within actual_query
+const nested = {
+	data1: "stuff",
+	image: QueryBuilder.Enum("$image")
+};
+// The actual query we want to run
+let actual_query = new QueryBuilder("imageUpload");
+actual_query.filter({
+	_id: 1,
+	display_name: "example",
+	nested
+});
+// putting the actual query into the wrapping mutation
+mutation.find([
+	actual_query
+]);
+
+let form_data = new FormData();
+
+const operations = {
+    query: mutation_query.toString(),
+    variables: {
+        image: null
+    }
+};
+form_data.append("operations", JSON.stringify(operations));
+
+const map = {
+    "0": ["variables.image"]
+};
+form_data.append("map", JSON.stringify(map));
+
+form_data.append("0", image_file); // image_file is variable that is holding your File/Blob
+```
+
+**Output**
+
+mutation output
+```
+mutation($image: Upload) {
+	imageUpload(
+		_id: 1, 
+		display_name: "example", 
+		nested: {
+			data1: "stuff", 
+			image: $image
+		})
+}
+```
+
 # Install
 
 Use this instead of the install below. 
